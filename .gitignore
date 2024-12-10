@@ -1,0 +1,5 @@
+node_modules/
+build/
+.env
+appsBK
+資料夾配置.txt
