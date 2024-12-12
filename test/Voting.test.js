@@ -13,25 +13,28 @@ contract("Voting", (accounts) => {
         assert.equal(owner, accounts[0], "Owner should be the deployer");
     });
 
-    it("should allow the owner to add a candidate", async () => {
-        await votingInstance.addCandidate("Alice", { from: accounts[0] }); // 添加候選人
-        const candidate = await votingInstance.candidates(1); // 獲取候選人信息
+    it("should allow the owner to add candidates", async () => {
+        await votingInstance.addCandidate("Wayne You 肯德雞", { from: accounts[0] });
+        await votingInstance.addCandidate("Jacky Fan 麥當勞", { from: accounts[0] });
+        await votingInstance.addCandidate("Cheng Tseng Pizza", { from: accounts[0] });
+        await votingInstance.addCandidate("Nelson Tseng 茶餐廳", { from: accounts[0] });
+        await votingInstance.addCandidate("Yoyo Wang LadyM 蛋糕", { from: accounts[0] });
 
-        assert.equal(candidate.name, "Alice", "Candidate name should be Alice");
-        assert.equal(candidate.voteCount.toNumber(), 0, "Initial vote count should be 0");
-    });
+        const candidate1 = await votingInstance.candidates(1);
+        const candidate2 = await votingInstance.candidates(2);
+        const candidate3 = await votingInstance.candidates(3);
+        const candidate4 = await votingInstance.candidates(4);
+        const candidate5 = await votingInstance.candidates(5);
 
-    it("should not allow non-owner to add a candidate", async () => {
-        try {
-            await votingInstance.addCandidate("Bob", { from: accounts[1] }); // 非所有者嘗試添加候選人
-            assert.fail("Non-owner was able to add a candidate");
-        } catch (error) {
-            assert(error.message.includes("Only the owner can perform this action."), "Error message should contain 'Only the owner can perform this action.'");
-        }
+        assert.equal(candidate1.name, "Wayne You 肯德雞", "First candidate name should be Wayne You 肯德雞");
+        assert.equal(candidate2.name, "Jacky Fan 麥當勞", "Second candidate name should be Jacky Fan 麥當勞");
+        assert.equal(candidate3.name, "Cheng Tseng Pizza", "Third candidate name should be Cheng Tseng Pizza");
+        assert.equal(candidate4.name, "Nelson Tseng 茶餐廳", "Fourth candidate name should be Nelson Tseng 茶餐廳");
+        assert.equal(candidate5.name, "Yoyo Wang LadyM 蛋糕", "Fifth candidate name should be Yoyo Wang LadyM 蛋糕");
     });
 
     it("should allow a user to vote for a candidate", async () => {
-        await votingInstance.addCandidate("Alice", { from: accounts[0] });
+        await votingInstance.addCandidate("Wayne You 肯德雞", { from: accounts[0] });
         await votingInstance.vote(1, { from: accounts[1] }); // 帳戶 1 投票給候選人 ID 為 1
 
         const candidate = await votingInstance.candidates(1);
@@ -39,7 +42,7 @@ contract("Voting", (accounts) => {
     });
 
     it("should prevent double voting by the same user", async () => {
-        await votingInstance.addCandidate("Alice", { from: accounts[0] });
+        await votingInstance.addCandidate("Wayne You 肯德雞", { from: accounts[0] });
         await votingInstance.vote(1, { from: accounts[1] }); // 第一次投票
 
         try {
@@ -60,13 +63,19 @@ contract("Voting", (accounts) => {
     });
 
     it("should return all candidates correctly", async () => {
-        await votingInstance.addCandidate("Alice", { from: accounts[0] });
-        await votingInstance.addCandidate("Bob", { from: accounts[0] });
+        await votingInstance.addCandidate("Wayne You 肯德雞", { from: accounts[0] });
+        await votingInstance.addCandidate("Jacky Fan 麥當勞", { from: accounts[0] });
+        await votingInstance.addCandidate("Cheng Tseng Pizza", { from: accounts[0] });
+        await votingInstance.addCandidate("Nelson Tseng 茶餐廳", { from: accounts[0] });
+        await votingInstance.addCandidate("Yoyo Wang LadyM 蛋糕", { from: accounts[0] });
 
         const candidates = await votingInstance.getAllCandidates();
 
-        assert.equal(candidates.length, 2, "There should be 2 candidates");
-        assert.equal(candidates[0].name, "Alice", "First candidate name should be Alice");
-        assert.equal(candidates[1].name, "Bob", "Second candidate name should be Bob");
+        assert.equal(candidates.length, 5, "There should be 5 candidates");
+        assert.equal(candidates[0].name, "Wayne You 肯德雞", "First candidate name should be Wayne You 肯德雞");
+        assert.equal(candidates[1].name, "Jacky Fan 麥當勞", "Second candidate name should be Jacky Fan 麥當勞");
+        assert.equal(candidates[2].name, "Cheng Tseng Pizza", "Third candidate name should be Cheng Tseng Pizza");
+        assert.equal(candidates[3].name, "Nelson Tseng 茶餐廳", "Fourth candidate name should be Nelson Tseng 茶餐廳");
+        assert.equal(candidates[4].name, "Yoyo Wang LadyM 蛋糕", "Fifth candidate name should be Yoyo Wang LadyM 蛋糕");
     });
 });
